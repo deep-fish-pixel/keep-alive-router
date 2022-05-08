@@ -1,6 +1,8 @@
 # keep-alive-router-view  [中文](./README-CH.md)
 Extend vue keep-alive and router-view, add the function of automatically judging whether to use the cache. 
 
+### The background of the problem
+
 If the page uses keep-alive and router-view, the advantage is that the operation state of the previous step is quickly restored when the next page operation returns, and this experience is very good. 
 
 But it also brings problems. 
@@ -9,7 +11,7 @@ When the user enters the page from the navigation menu or breadcrumb, a brand ne
 
 keep-alive-router-view solves this problem. 
 
-It only uses the cache when you operate $router.back and $router.go to return the page by default, and $router.push does not use the cache by default.
+It uses the cache when you operate $router.back and $router.go to return the page by default, and $router.push does not use the cache by default.
 
 ### Install
 ```npm i keep-alive-router-view```

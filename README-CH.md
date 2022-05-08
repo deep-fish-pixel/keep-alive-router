@@ -1,11 +1,13 @@
 # keep-alive-router-view
 扩展vue的keep-alive and router-view，可以自动判断是否需要使用缓存功能。
 
-如果页面使用了keep-alive和router-view，好处是在下一个页面操作返回时快速恢复了上一步的操作状态，这样的体验非常好。
+### 背景
+
+当你项目中使用了keep-alive和router-view，好处是在下一个页面操作返回时快速恢复了上一步的操作状态，这样的体验非常好。
 
 但是也有另外一个问题，当用户从导航菜单或面包削等入口进入页面，是需要一个全新页面的，但实际上还是使用了缓存的页面，这样的结果不是我们想要的。
 
-keep-alive-router-view解决了这样问题，只在你操作$router.back和$router.go默认返回页面使用缓存，
+keep-alive-router-view解决了这样问题，在你操作$router.back和$router.go默认返回页面使用缓存，
 $router.push默认不使用缓存。
 
 ### 安装
