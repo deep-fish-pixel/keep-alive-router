@@ -1,4 +1,4 @@
-# keep-alive-router  [中文](./README-CH.md)
+# keep-alive-router-view  [中文](./README-CH.md)
 Extend vue keep-alive and router-view, add the function of automatically judging whether to use the cache. 
 
 If the page uses keep-alive and router-view, the advantage is that the operation state of the previous step is quickly restored when the next page operation returns, and this experience is very good. 
@@ -7,38 +7,38 @@ But it also brings problems.
 
 When the user enters the page from the navigation menu or breadcrumb, a brand new page is needed, but the cached page is actually used, and this result is not what we want. 
 
-keep-alive-router solves this problem. 
+keep-alive-router-view solves this problem. 
 
 It only uses the cache when you operate $router.back and $router.go to return the page by default, and $router.push does not use the cache by default.
 
 ### Install
-```npm i keep-alive-router```
+```npm i keep-alive-router-view```
 
 ### Steps for usage
 
 #### First: import lib module
 
 ```
-import 'keep-alive-router';
+import 'keep-alive-router-view';
 ```
 
-#### Second: use keep-alive-router component replace keep-alive and router-view components
+#### Second: use keep-alive-router-view component replace keep-alive and router-view components
 
-keep-alive-router encapsulates keep-alive and router-view internally, 
+keep-alive-router-view encapsulates keep-alive and router-view internally, 
 
-so you only need to write the keep-alive-router component element.
+so you only need to write the keep-alive-router-view component element.
 
 The disabled attribute is used to disable the use of page caching.
 
 ```
 <div id="app">
-    <keep-alive-router :disabled="!$route.meta.keepAlive" />
+    <keep-alive-router-view :disabled="!$route.meta.keepAlive" />
 </div>
 ```
 
 #### Third: must use the method of the vue-router instance. Only after $router.go and $router.back are called, the cached page is used.
 
-### keep-alive-router properties descriptions
+### keep-alive-router-view properties descriptions
 
 | property | description | type | option | default |
 | --- | --- | --- | --- | --- |

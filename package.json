@@ -1,6 +1,6 @@
 {
-  "name": "keep-alive-router",
-  "version": "1.0.3",
+  "name": "keep-alive-router-view",
+  "version": "1.0.1",
   "keywords": ["keep-alive", "router-view", "cache"],
   "scripts": {
     "build": "rollup --config",
