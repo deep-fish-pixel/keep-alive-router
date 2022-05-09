@@ -27,6 +27,9 @@ export default {
       return go.apply(this, [-1]);
     };
     router.go = function(num, options) {
+      if (num > 0) {
+        keepAlive = false;
+      }
       if (options && typeof options.keepAlive === 'boolean') {
         keepAlive = options.keepAlive;
       }

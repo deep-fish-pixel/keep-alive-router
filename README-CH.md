@@ -1,5 +1,6 @@
 # keep-alive-router-view
 扩展vue2的keep-alive and router-view，可以自动判断是否需要使用缓存功能。
+对vue3的支持[点击这里](https://github.com/maweimaweima/router-view-keep-alive)
 
 ### 背景
 
@@ -11,6 +12,7 @@ keep-alive-router-view解决了这样问题，在你操作$router.back和$router
 $router.push默认不使用缓存。
 
 ### 安装
+
 ```npm i keep-alive-router-view```
 
 ### 使用步骤
@@ -67,7 +69,7 @@ this.$router.back({
 ```
 
 #### $router.go
-go接口展示的页面默认使用缓存功能。如果禁止使用，配置keepAlive为false
+go接口展示的页面，小于0默认使用缓存功能，大于0默认禁止使用缓存。如果禁止使用，配置keepAlive为false
 ```javascript
 this.$router.go(-1, {
   keepAlive: false

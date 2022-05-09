@@ -1,5 +1,6 @@
 # keep-alive-router-view  [中文](./README-CH.md)
-Extend vue2 keep-alive and router-view, add the function of automatically judging whether to use the cache. 
+Extend vue2 keep-alive and router-view, add the function of automatically judging whether to use the cache.
+Support for vue3 [Click here](https://github.com/maweimaweima/router-view-keep-alive)
 
 ### The background of the problem
 
@@ -14,6 +15,7 @@ keep-alive-router-view solves this problem.
 It uses the cache when you operate $router.back and $router.go to return the page by default, and $router.push does not use the cache by default.
 
 ### Install
+
 ```npm i keep-alive-router-view```
 
 ### Steps for usage
@@ -77,7 +79,8 @@ this.$router.back({
 
 #### $router.go
 
-The page displayed by the go interface uses the cache function by default. If disabled, configure keepAlive to false
+The page displayed by the go interface uses the cache function by default when it is less than 0, and the cache is prohibited by default when it is greater than 0.
+If disabled, configure keepAlive to false
 
 ```javascript
 this.$router.go(-1, {
