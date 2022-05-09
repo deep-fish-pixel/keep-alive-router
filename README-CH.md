@@ -1,5 +1,5 @@
 # keep-alive-router-view
-扩展vue的keep-alive and router-view，可以自动判断是否需要使用缓存功能。
+扩展vue2的keep-alive and router-view，可以自动判断是否需要使用缓存功能。
 
 ### 背景
 
@@ -15,10 +15,12 @@ $router.push默认不使用缓存。
 
 ### 使用步骤
 
-#### 第一步 先引用模块
+#### 第一步 引用并注册组件
 
 ```
-import 'keep-alive-router-view';
+import KeepAliveRouterView from 'keep-alive-router-view';
+
+Vue.use(KeepAliveRouterView);
 ```
 
 #### 第二步 使用keep-alive-router-view组件代替keep-alive和router-view

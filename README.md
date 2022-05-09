@@ -1,5 +1,5 @@
 # keep-alive-router-view  [中文](./README-CH.md)
-Extend vue keep-alive and router-view, add the function of automatically judging whether to use the cache. 
+Extend vue2 keep-alive and router-view, add the function of automatically judging whether to use the cache. 
 
 ### The background of the problem
 
@@ -18,10 +18,12 @@ It uses the cache when you operate $router.back and $router.go to return the pag
 
 ### Steps for usage
 
-#### First: import lib module
+#### First: import and register component
 
 ```
-import 'keep-alive-router-view';
+import KeepAliveRouterView from 'keep-alive-router-view';
+
+Vue.use(KeepAliveRouterView);
 ```
 
 #### Second: use keep-alive-router-view component replace keep-alive and router-view components

@@ -1,14 +1,13 @@
-import Vue from 'vue';
 import wrapRouter from './wrapRouter';
 
-const Main = {
+const KeepAliveRouterView = {
   name: 'KeepAliveRouterView',
   props: {
+    disabled: Boolean,
     include: RegExp,
     exclude: RegExp,
     max: Number,
-    name: String,
-    disabled: Boolean
+    name: String
   },
   data() {
     return {
@@ -34,7 +33,7 @@ const Main = {
   },
 
   created () {
-    this.cache = Object.create(null);
+    wrapRouter.wrap(this.$router.constructor.prototype);
     this.$router.beforeEach(this.before);
     this.$router.afterEach(this.after);
   },
@@ -48,16 +47,16 @@ const Main = {
 
     return createElement(
       'div',
-      {
-        attrs: {
-          include: this.include,
-          exclude: this.exclude,
-          max: this.max
-        }
-      },
       [
         createElement(
           'keep-alive',
+          {
+            attrs: {
+              include: this.include,
+              exclude: this.exclude,
+              max: this.max
+            }
+          },
           [!this.disabled && wrapRouter.getKeepAlive() ? createElement('router-view', {
             attrs: {
               name: this.name
@@ -76,6 +75,8 @@ const Main = {
   }
 };
 
-Vue.component(Main.name, Main);
-
-export default Main;
+export default {
+  install(Vue) {
+    Vue.component(KeepAliveRouterView.name, KeepAliveRouterView);
+  }
+};
