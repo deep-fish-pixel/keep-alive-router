@@ -11,7 +11,8 @@ const KeepAliveRouterView = {
   },
   data() {
     return {
-      hasDestroyed: false
+      hasDestroyed: false,
+      keepAliveRef: null,
     };
   },
 
@@ -19,6 +20,10 @@ const KeepAliveRouterView = {
     before(to, from, next) {
       if (this.hasDestroyed) {
         return next();
+      }
+      this.setKeepAliveRef();
+      if (this.keepAliveRef && (!wrapRouter.getKeepAlive() || !to.meta.keepAlive)) {
+        this.deleteCache(to.name, to.matched && to.matched[0] && (to.matched[0].instances && to.matched[0].instances.default || to.matched[0].instances));
       }
       next();
     },
@@ -29,6 +34,23 @@ const KeepAliveRouterView = {
       this.$nextTick(() => {
         wrapRouter.setKeepAlive(true);
       });
+    },
+    setKeepAliveRef() {
+      if (this.$refs.cachedPage) {
+        this.keepAliveRef = this.$refs.cachedPage.$options.parent;
+      }
+    },
+    deleteCache(name, instance){
+      const keepAliveRef = this.keepAliveRef;
+      if (keepAliveRef) {
+        const cache = keepAliveRef.cache || {};
+        Object.keys(cache).some((index) => {
+          const item = keepAliveRef.cache[index];
+          if(item && (item.name === name || item.componentInstance === instance)){
+            return delete keepAliveRef.cache[index];
+          }
+        });
+      }
     }
   },
 
@@ -47,28 +69,27 @@ const KeepAliveRouterView = {
 
     return createElement(
       'div',
+      {
+        ref: "xxxxx",
+      },
       [
         createElement(
           'keep-alive',
           {
-            attrs: {
+            props: {
               include: this.include,
               exclude: this.exclude,
               max: this.max
-            }
+            },
           },
-          [!this.disabled && wrapRouter.getKeepAlive() ? createElement('router-view', {
-            attrs: {
+          [createElement('router-view', {
+            ref: "cachedPage",
+            props: {
               name: this.name
             }
-          }) : this._e()],
+          })],
           1
-        ),
-        this.disabled || !wrapRouter.getKeepAlive() ? createElement('router-view', {
-          attrs: {
-            name: this.name
-          }
-        }) : this._e()
+        )
       ],
       1
     );
