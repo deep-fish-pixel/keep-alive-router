@@ -67,32 +67,25 @@ const KeepAliveRouterView = {
   render () {
     const createElement = this._self._c || this.$createElement;
 
-    return createElement(
-      'div',
-      {
-        ref: "xxxxx",
-      },
-      [
-        createElement(
-          'keep-alive',
-          {
-            props: {
-              include: this.include,
-              exclude: this.exclude,
-              max: this.max
-            },
+    return [
+      createElement(
+        'keep-alive',
+        {
+          props: {
+            include: this.include,
+            exclude: this.exclude,
+            max: this.max
           },
-          [createElement('router-view', {
-            ref: "cachedPage",
-            props: {
-              name: this.name
-            }
-          })],
-          1
-        )
-      ],
-      1
-    );
+        },
+        [createElement('router-view', {
+          ref: "cachedPage",
+          props: {
+            name: this.name
+          }
+        })],
+        1
+      )
+    ];
   }
 };
 
