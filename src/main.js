@@ -13,6 +13,7 @@ const KeepAliveRouterView = {
     return {
       hasDestroyed: false,
       keepAliveRef: null,
+      cache: {}
     };
   },
 
@@ -22,9 +23,6 @@ const KeepAliveRouterView = {
         return next();
       }
       this.setKeepAliveRef();
-      if (this.keepAliveRef && (!wrapRouter.getKeepAlive() || !to.meta.keepAlive)) {
-        this.deleteCache(to.name, to.matched && to.matched[0] && (to.matched[0].instances && to.matched[0].instances.default || to.matched[0].instances));
-      }
       next();
     },
     after() {
@@ -33,24 +31,21 @@ const KeepAliveRouterView = {
       }
       // 微前端中需要延迟较多时间
       setTimeout(() => {
+        if (this.disabled) {
+          this.restoreCached();
+        }
         wrapRouter.setKeepAlive(true);
       }, 10);
     },
     setKeepAliveRef() {
       if (this.$refs.cachedPage) {
         this.keepAliveRef = this.$refs.cachedPage.$options.parent;
+        this.cache = {...(this.keepAliveRef.cache || {})};
       }
     },
-    deleteCache(name, instance){
-      const keepAliveRef = this.keepAliveRef;
-      if (keepAliveRef) {
-        const cache = keepAliveRef.cache || {};
-        Object.keys(cache).some((index) => {
-          const item = keepAliveRef.cache[index];
-          if(item && (item.name === name || item.componentInstance === instance)){
-            return delete keepAliveRef.cache[index];
-          }
-        });
+    restoreCached() {
+      if (this.$refs.cachedPage) {
+        this.$refs.cachedPage.$options.parent.cache = this.cache;
       }
     }
   },
@@ -62,8 +57,6 @@ const KeepAliveRouterView = {
   },
   destroyed () {
     this.hasDestroyed = true;
-  },
-  mounted () {
   },
   render () {
     const createElement = this._self._c || this.$createElement;
