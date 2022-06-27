@@ -16,13 +16,15 @@ const KeepAliveRouterView = {
       cache: {}
     };
   },
-
   methods: {
     before(to, from, next) {
       if (this.hasDestroyed) {
         return next();
       }
       this.setKeepAliveRef();
+      if (this.keepAliveRef && (!wrapRouter.getKeepAlive() || !to.meta.keepAlive)) {
+        this.deleteCache(to.name, to.matched && to.matched[0] && (to.matched[0].instances && to.matched[0].instances.default || to.matched[0].instances));
+      }
       next();
     },
     after() {
@@ -31,7 +33,7 @@ const KeepAliveRouterView = {
       }
       // 微前端中需要延迟较多时间
       setTimeout(() => {
-        if (this.disabled) {
+        if (this.disabled || !wrapRouter.getKeepAlive()) {
           this.restoreCached();
         }
         wrapRouter.setKeepAlive(true);
@@ -46,6 +48,19 @@ const KeepAliveRouterView = {
     restoreCached() {
       if (this.$refs.cachedPage) {
         this.$refs.cachedPage.$options.parent.cache = this.cache;
+      }
+    },
+    deleteCache(name, instance){
+      const cache = this.cache;
+      if (cache) {
+        Object.keys(cache).some((index) => {
+          const item = cache[index];
+          if(item && (item.name === name || item.componentInstance === instance)){
+            delete cache[index];
+            this.restoreCached();
+            return true;
+          }
+        });
       }
     }
   },
