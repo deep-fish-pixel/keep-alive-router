@@ -13,8 +13,7 @@ const KeepAliveRouterView = {
     return {
       hasDestroyed: false,
       keepAliveRef: null,
-      cache: {},
-      destoryingCache: []
+      cache: {}
     };
   },
   methods: {
@@ -52,7 +51,7 @@ const KeepAliveRouterView = {
         const oldCache = this.cache;
         Object.keys(newCache).forEach(key => {
           if(!oldCache[key]){
-            this.destoryingCache.push(newCache[key].componentInstance);
+            this.setkeepAliveInValidate(newCache[key].componentInstance);
           }
         });
         this.$refs.cachedPage.$options.parent.cache = this.cache;
@@ -65,13 +64,20 @@ const KeepAliveRouterView = {
           const item = cache[index];
           if(item && (item.name === name || item.componentInstance === instance)){
             delete cache[index];
-            item.componentInstance.$destroy();
+            this.setkeepAliveInValidate(item.componentInstance);
             this.restoreCached();
             return true;
           }
         });
-        this.destoryingCache.forEach((componentInstance) => componentInstance.$destroy());
-        this.destoryingCache = [];
+      }
+    },
+    setkeepAliveInValidate(componentInstance){
+      if (!componentInstance) {
+        return;
+      }
+      const vnode = componentInstance.$vnode;
+      if(vnode.data){
+        vnode.data.keepAlive = false;
       }
     }
   },
