@@ -13,7 +13,8 @@ const KeepAliveRouterView = {
     return {
       hasDestroyed: false,
       keepAliveRef: null,
-      cache: {}
+      cache: {},
+      disabledCachedKeys: {}
     };
   },
   methods: {
@@ -22,8 +23,9 @@ const KeepAliveRouterView = {
         return next();
       }
       this.setKeepAliveRef();
+      this.deleteCacheByKey();
       if (this.keepAliveRef && (!wrapRouter.getKeepAlive() || !to.meta.keepAlive)) {
-        this.deleteCache(to.name, to.matched && to.matched[0] && (to.matched[0].instances && to.matched[0].instances.default || to.matched[0].instances));
+        this.deleteCacheByName(to.name, to.matched && to.matched[0] && (to.matched[0].instances && to.matched[0].instances.default || to.matched[0].instances));
       }
       next();
     },
@@ -51,27 +53,39 @@ const KeepAliveRouterView = {
         const oldCache = this.cache;
         Object.keys(newCache).forEach(key => {
           if(!oldCache[key]){
-            this.setkeepAliveInValidate(newCache[key].componentInstance);
+            this.setkeepAliveInValidate(newCache[key].componentInstance, key);
           }
         });
         this.$refs.cachedPage.$options.parent.cache = this.cache;
       }
     },
-    deleteCache(name, instance){
+    deleteCacheByKey(){
+      const cache = this.cache;
+      if (cache) {
+        Object.keys(cache).some((index) => {
+          if (this.disabledCachedKeys[index]) {
+            delete cache[index];
+            this.setkeepAliveInValidate(this.disabledCachedKeys[index], index);
+            this.restoreCached();
+          }
+        });
+      }
+    },
+    deleteCacheByName(name, instance){
       const cache = this.cache;
       if (cache) {
         Object.keys(cache).some((index) => {
           const item = cache[index];
           if(item && (item.name === name || item.componentInstance === instance)){
             delete cache[index];
-            this.setkeepAliveInValidate(item.componentInstance);
-            this.restoreCached();
+            this.$refs.cachedPage.$options.parent.cache = this.cache;
+            this.$refs.cachedPage.$options.parent.keys.pop();
             return true;
           }
         });
       }
     },
-    setkeepAliveInValidate(componentInstance){
+    setkeepAliveInValidate(componentInstance, key){
       if (!componentInstance) {
         return;
       }
@@ -79,6 +93,8 @@ const KeepAliveRouterView = {
       if(vnode.data){
         vnode.data.keepAlive = false;
       }
+      this.disabledCachedKeys[key] = componentInstance;
+      this.$refs.cachedPage.$options.parent.keys.pop();
     }
   },
 
