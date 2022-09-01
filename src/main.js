@@ -24,7 +24,7 @@ const KeepAliveRouterView = {
       }
       this.setKeepAliveRef();
       this.deleteCacheByKey();
-      if (this.keepAliveRef && (!wrapRouter.getKeepAlive() || !to.meta.keepAlive)) {
+      if (this.keepAliveRef && (!wrapRouter.getKeepAlive() || (!to.meta || to.meta && !to.meta.keepAlive))) {
         this.deleteCacheByName(to.name, to.matched && to.matched[0] && (to.matched[0].instances && to.matched[0].instances.default || to.matched[0].instances));
       }
       next();
