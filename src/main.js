@@ -35,28 +35,30 @@ const KeepAliveRouterView = {
       }
       // 微前端中需要延迟较多时间
       setTimeout(() => {
-        if (this.disabled || !wrapRouter.getKeepAlive()) {
+        if (this.disabled && !wrapRouter.getKeepAlive()) {
           this.restoreCached();
         }
         wrapRouter.setKeepAlive(true);
       }, 10);
     },
     setKeepAliveRef() {
-      if (this.$refs.cachedPage) {
-        this.keepAliveRef = this.$refs.cachedPage.$options.parent;
+      const cachePage = this.$refs.cachedPage;
+      if (cachePage) {
+        this.keepAliveRef = cachePage.$options.parent;
         this.cache = {...(this.keepAliveRef.cache || {})};
       }
     },
     restoreCached() {
-      if (this.$refs.cachedPage) {
-        const newCache = this.$refs.cachedPage.$options.parent.cache;
+      const cachePage = this.$refs.cachedPage;
+      if (cachePage) {
+        const newCache = cachePage.$options.parent.cache;
         const oldCache = this.cache;
         Object.keys(newCache).forEach(key => {
           if(!oldCache[key]){
             this.setkeepAliveInValidate(newCache[key].componentInstance, key);
           }
         });
-        this.$refs.cachedPage.$options.parent.cache = this.cache;
+        cachePage.$options.parent.cache = this.cache;
       }
     },
     deleteCacheByKey(){
@@ -78,8 +80,11 @@ const KeepAliveRouterView = {
           const item = cache[index];
           if(item && (item.name === name || item.componentInstance === instance)){
             delete cache[index];
-            this.$refs.cachedPage.$options.parent.cache = this.cache;
-            this.$refs.cachedPage.$options.parent.keys.pop();
+            const cachePage = this.$refs.cachedPage;
+            if (cachePage) {
+              cachePage.$options.parent.cache = this.cache;
+              cachePage.$options.parent.keys.pop();
+            }
             return true;
           }
         });
@@ -94,7 +99,10 @@ const KeepAliveRouterView = {
         vnode.data.keepAlive = false;
       }
       this.disabledCachedKeys[key] = componentInstance;
-      this.$refs.cachedPage.$options.parent.keys.pop();
+      const cachePage = this.$refs.cachedPage;
+      if (cachePage) {
+        cachePage.$options.parent.keys.pop();
+      }
     }
   },
 
