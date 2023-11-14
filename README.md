@@ -1,6 +1,6 @@
 # keep-alive-router-view  [中文](./README-CH.md)
 Extend vue2 keep-alive and router-view, add the function of automatically judging whether to use the cache.
-Support for vue3 [Click here](https://github.com/maweimaweima/router-view-keep-alive)
+Support for vue3 [Click here](https://www.npmjs.com/package/keep-alive-vue3)
 
 ### The background of the problem
 
@@ -12,7 +12,7 @@ When the user enters the page from the navigation menu or breadcrumb, a brand ne
 
 keep-alive-router-view solves this problem. 
 
-It uses the cache when you operate $router.back and $router.go to return the page by default, and $router.push does not use the cache by default.
+It uses the cache when you operate $router.back and $router.go to return the page by default, and $router.push and $router.replace do not use the cache by default.
 
 ### Install
 
@@ -34,57 +34,83 @@ keep-alive-router-view encapsulates keep-alive and router-view internally,
 
 so you only need to write the keep-alive-router-view component element.
 
-The disabled attribute is used to disable the use of page caching.
+The cache attribute is used to cache the use of page caching.
 
+##### Example1
 ```
-<div id="app">
-    <keep-alive-router-view :disabled="!$route.meta.keepAlive" />
-</div>
+<-- Recommend -->
+<keep-alive-router-view :cache="$route.meta.cache" />
+```
+##### Example2
+```
+<-- Use cache for items with tab manager -->
+<keep-alive-router-view
+    :cache="!$route.meta || !$route.meta.noCache"
+    :defaultCache="true" />
 ```
 
 #### Third: must use the method of the vue-router instance. Only after $router.go and $router.back are called, the cached page is used.
 
 ### keep-alive-router-view properties descriptions
 
-| property | description | type | option | default |
-| --- | --- | --- | --- | --- |
-| disabled | whether to disable page caching | Boolean  | true/false | true |
-| name | router-view name | String  | - | - |
-| include | only components with matching names will be cached | RegExp  | - | - |
-| exclude | any component whose name matches will not be cached | RegExp  | - | - |
-| max | maximum number of component instances that can be cached | Number  | - | - |
-
-### [Example](https://codesandbox.io/s/vue2-route-view-keep-alive-0i17y8)
+| property | description                                               | type | option | default |
+| --- |-----------------------------------------------------------| --- | --- |---------|
+| cache | whether to cache page                                     | Boolean  | true/false | false   |
+| defaultCache | $router.push、$router.replace and $router.go(value is greater than 0) parameter cache will use the value  | Boolean | true/false | false |
+| name | router-view name                                          | String  | - | -       |
+| include | only components with matching names will be cached        | RegExp  | - | -       |
+| exclude | any component whose name matches will not be cached       | RegExp  | - | -       |
+| max | maximum number of component instances that can be cached  | Number  | - | -       |
 
 ### vue-router interface extensions
 
-#### $router.push
+#### $router.push/replace
 
-The page displayed by the push interface does not use the cache function by default. If you need to use it, configure keepAlive to true
+The page displayed by the push/replace interface does not use the cache function by default. If you need to use it, configure cache to true
+_Note that defaultCache can change the default cache_
 
 ```javascript
+// disable cache
 this.$router.push({
   name: 'list',
-  keepAlive: true
+});
+this.$router.replace({
+  name: 'list',
+});
+
+// use cache
+this.$router.push({
+  name: 'list',
+  cache: true
+});
+this.$router.replace({
+  name: 'list',
+  cache: true
 });
 ```
-#### $router.back
 
-The page displayed by the back interface uses the cache function by default. If disabled, configure keepAlive to false
+#### $router.back/forward/go
+
+The page displayed by the back/forward/go interface uses the cache function by default.
+If not use cached page, configure cache to false
 
 ```javascript
-this.$router.back({
-  keepAlive: false
-});
+// defaut use cache
+this.$router.back();
+this.$router.forward();
+this.$router.go(1);
+
+// disable cache
+this.$router.back({cache: false});
+this.$router.forward({cache: false});
+this.$router.go(1, {cache: false});
 ```
 
-#### $router.go
-
-The page displayed by the go interface uses the cache function by default when it is less than 0, and the cache is prohibited by default when it is greater than 0.
-If disabled, configure keepAlive to false
-
-```javascript
-this.$router.go(-1, {
-  keepAlive: false
-});
-```
+### keep-alive-router-view attribute cache and $router interface parameter cache values determine whether the page uses cache.
+| keep-alive-router-view cache | $router cache   | Whether to use cache |
+|------------------|-----------------|----------------------|
+| true             | true            | Yes                  |
+| true             | false           | Not                  |
+| false            | true            | Not                  |
+| false            | false           | Not                  |
+The page cache takes effect when both cache values are true. None of the others use cached pages.
